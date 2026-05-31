@@ -15,11 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+        User::create([
             'username' => 'admin',
-            'password' => 'admin',
+            'password' => \Illuminate\Support\Facades\Hash::make('admin'),
         ]);
 
         $this->call(ExpertSystemSeeder::class);
