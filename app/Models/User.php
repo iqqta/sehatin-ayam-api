@@ -20,9 +20,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'username',
-        'email',
         'password',
     ];
+
+    protected $primaryKey = 'username';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,7 +45,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

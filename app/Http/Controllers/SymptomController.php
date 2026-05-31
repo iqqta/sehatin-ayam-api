@@ -6,6 +6,7 @@ use App\Models\Symptom;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rule as ValidationRule;
 
 class SymptomController extends Controller
 {
@@ -14,7 +15,7 @@ class SymptomController extends Controller
      */
     public function index(): View
     {
-        $symptoms = Symptom::orderBy('code')->get();
+        $symptoms = Symptom::orderBy('symptom_code')->get();
         return view('symptoms.index', compact('symptoms'));
     }
 
@@ -32,8 +33,15 @@ class SymptomController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'code' => 'required|unique:symptoms,code',
+            'symptom_code' => [
+                'required',
+                ValidationRule::unique('symptoms', 'symptom_code')
+            ],
             'name' => 'required',
+        ],[
+            'symptom_code.unique' => 'Kode gejala sudah ada!',
+            'symptom_code.required' => 'Kode gejala wajib diisi!',
+            'name.required' => 'Nama gejala wajib diisi!',
         ]);
 
         Symptom::create($request->all());
@@ -56,8 +64,16 @@ class SymptomController extends Controller
     public function update(Request $request, Symptom $symptom): RedirectResponse
     {
         $request->validate([
-            'code' => 'required',
+            'symptom_code' => [
+                'required',
+                ValidationRule::unique('symptoms', 'symptom_code')->ignore($symptom->symptom_code, 'symptom_code')
+            ],
             'name' => 'required',
+        ],
+        [
+            'symptom_code.unique' => 'Kode gejala sudah ada!',
+            'symptom_code.required' => 'Kode gejala wajib diisi!',
+            'name.required' => 'Nama gejala wajib diisi!',
         ]);
 
         $symptom->update($request->all());
@@ -74,6 +90,6 @@ class SymptomController extends Controller
         $symptom->delete();
 
         return redirect()->route('symptoms.index')
-                        ->with('success','Symptom deleted successfully');
+                        ->with('success','Gejala berhasil dihapus');
     }
 }

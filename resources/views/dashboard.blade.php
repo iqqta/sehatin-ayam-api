@@ -1,4 +1,4 @@
-<x-canvas-layout>
+<x-app-layout>
     <x-slot name="header">
         Dashboard
     </x-slot>
@@ -53,45 +53,8 @@
             </div>
             <div class="flex items-end justify-between">
                 <span class="text-3xl font-bold text-gray-900">{{ $ruleCount }}</span>
-                <span class="text-sm text-gray-500">Basis Pengetahuan</span>
+                <span class="text-sm text-gray-500">Data terdaftar</span>
             </div>
         </div>
     </div>
-
-    <!-- Endpoints List -->
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">Daftar Endpoint</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full leading-normal">
-                <thead>
-                    <tr>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Method
-                        </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Endpoint
-                        </th>
-                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Deskripsi
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                GET
-                            </span>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <code class="text-gray-900 bg-gray-100 px-2 py-1 rounded">/api/sync</code>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">Mengambil semua data Penyakit, Gejala, Aturan, dan Penanganan dalam format JSON.</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</x-canvas-layout>
+</x-app-layout>

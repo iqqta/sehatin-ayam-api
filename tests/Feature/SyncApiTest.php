@@ -18,37 +18,42 @@ class SyncApiTest extends TestCase
         $symptom = Symptom::create(['code' => 'G01', 'name' => 'Symptom A', 'description' => 'Desc A', 'image' => 'img.jpg']);
         Rule::create(['disease_id' => $disease->id, 'symptom_id' => $symptom->id, 'mb' => 0.8, 'md' => 0.1]);
 
-        \App\Models\Treatment::create(['disease_id' => $disease->id, 'treat' => 'Give vaccine']);
+        \App\Models\KnowledgeBaseVersion::create([
+            'version' => 1,
+            'published_at' => now(),
+            'created_by' => null,
+            'diseases_count' => 1,
+            'symptoms_count' => 1,
+            'rules_count' => 1,
+        ]);
 
         $response = $this->getJson('/api/sync');
 
         $response->assertStatus(200)
             ->assertJson([
-                'diseases' => [
-                    [
-                        'code' => 'P01',
-                        'name' => 'Disease A',
-                        'commonSymptoms' => ['G01']
-                    ]
-                ],
-                'symptoms' => [
-                    [
-                        'code' => 'G01',
-                        'imagePath' => 'img.jpg'
-                    ]
-                ],
-                'rules' => [
-                    [
-                        'diseaseCode' => 'P01',
-                        'symptomCode' => 'G01',
-                        'mb' => 0.8,
-                        'md' => 0.1
-                    ]
-                ],
-                'treatments' => [
-                    [
-                        'diseaseCode' => 'P01',
-                        'treat' => 'Give vaccine'
+                'status' => 'new_update_available',
+                'version' => 1,
+                'data' => [
+                    'diseases' => [
+                        [
+                            'code' => 'P01',
+                            'name' => 'Disease A',
+                            'description' => 'Desc A'
+                        ]
+                    ],
+                    'symptoms' => [
+                        [
+                            'code' => 'G01',
+                            'name' => 'Symptom A'
+                        ]
+                    ],
+                    'rules' => [
+                        [
+                            'diseaseCode' => 'P01',
+                            'symptomCode' => 'G01',
+                            'mb' => 0.8,
+                            'md' => 0.1
+                        ]
                     ]
                 ]
             ]);

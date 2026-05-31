@@ -12,12 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rules', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('disease_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('symptom_id')->constrained()->cascadeOnDelete();
+            $table->string('disease_code');
+            $table->string('symptom_code');
             $table->float('mb');
             $table->float('md');
             $table->timestamps();
+
+            // Composite primary key
+            $table->primary(['disease_code', 'symptom_code']);
+
+            // Foreign keys
+            $table->foreign('disease_code')->references('disease_code')->on('diseases')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('symptom_code')->references('symptom_code')->on('symptoms')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

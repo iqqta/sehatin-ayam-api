@@ -6,6 +6,8 @@ use App\Models\Disease;
 use App\Models\Rule;
 use App\Models\Symptom;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule as ValidationRule;
+use Illuminate\Validation\Rules\Exists;
 
 class RuleController extends Controller
 {
@@ -14,7 +16,7 @@ class RuleController extends Controller
      */
     public function index()
     {
-        $rules = Rule::with(['disease', 'symptom'])->orderBy('disease_id')->get();
+        $rules = Rule::with(['disease', 'symptom'])->orderBy('disease_code')->get();
         return view('rules.index', compact('rules'));
     }
 
@@ -34,16 +36,32 @@ class RuleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'disease_id' => 'required|exists:diseases,id',
-            'symptom_id' => 'required|exists:symptoms,id',
-            'mb' => 'required|numeric|between:0,1',
-            'md' => 'required|numeric|between:0,1',
-        ]);
+            'disease_code' => [
+                'required', 
+                'exists:diseases,disease_code',
+                ValidationRule::unique('rules')->where(function ($query) use ($request) {
+                    return $query->where('disease_code', $request->input('disease_code'))
+                                 ->where('symptom_code', $request->input('symptom_code'));
+                }),
+            ],
+            'symptom_code' => [
+                'required',
+                'exists:symptoms,symptom_code'
+            ],
+            'mb' => 'required',
+            'md' => 'required',
+        ],
+        [
+            'disease_code.unique' => 'Kombinasi Penyakit dan Gejala ini sudah ada!',
+            'disease_code.required' => 'Penyakit wajib dipilih!',
+            'symptom_code.required' => 'Gejala wajib dipilih!',
+            'mb.required' => 'Nilai MB wajib diisi!',
+            'md.required' => 'Nilai MD wajib diisi!',
+        ]); 
 
         Rule::create($request->all());
-
         return redirect()->route('rules.index')
-                        ->with('success', 'Rule created successfully.');
+                        ->with('success', 'Aturan berhasil ditambahkan');
     }
 
     /**
@@ -57,8 +75,9 @@ class RuleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Rule $rule)
+    public function edit($disease_code, $symptom_code)
     {
+        $rule = Rule::where('disease_code', $disease_code)->where('symptom_code', $symptom_code)->firstOrFail();
         $diseases = Disease::all();
         $symptoms = Symptom::all();
         return view('rules.edit', compact('rule', 'diseases', 'symptoms'));
@@ -67,29 +86,54 @@ class RuleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Rule $rule)
+    public function update(Request $request, $disease_code, $symptom_code)
     {
         $request->validate([
-            'disease_id' => 'required|exists:diseases,id',
-            'symptom_id' => 'required|exists:symptoms,id',
-            'mb' => 'required|numeric|between:0,1',
-            'md' => 'required|numeric|between:0,1',
+            'disease_code' => [
+                'required',
+                'exists:diseases,disease_code',
+                ValidationRule::unique('rules')->where(function ($query) use ($request, $disease_code, $symptom_code) {
+                    return $query->where('disease_code', $request->input('disease_code'))
+                                 ->where('symptom_code', $request->input('symptom_code'))
+                                 ->whereNot(function ($query) use ($disease_code, $symptom_code) {
+                                     $query->where('disease_code', $disease_code)
+                                           ->where('symptom_code', $symptom_code);
+                                 });
+                }),
+            ],
+            'symptom_code' => [
+                'required',
+                'exists:symptoms,symptom_code'
+            ],
+            'mb' => 'required',
+            'md' => 'required',
+        ],[
+            'disease_code.unique' => 'Kombinasi Penyakit dan Gejala ini sudah ada!',
+            'disease_code.required' => 'Penyakit wajib dipilih!',
+            'symptom_code.required' => 'Gejala wajib dipilih!',
+            'mb.required' => 'Nilai MB wajib diisi!',
+            'md.required' => 'Nilai MD wajib diisi!',
         ]);
 
-        $rule->update($request->all());
+        Rule::where('disease_code', $disease_code)->where('symptom_code', $symptom_code)->update([
+            'disease_code' => $request->disease_code,
+            'symptom_code' => $request->symptom_code,
+            'mb' => $request->mb,
+            'md' => $request->md,
+        ]);
 
         return redirect()->route('rules.index')
-                        ->with('success', 'Rule updated successfully');
+                        ->with('success', 'Aturan berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rule $rule)
+    public function destroy($disease_code, $symptom_code)
     {
-        $rule->delete();
+        Rule::where('disease_code', $disease_code)->where('symptom_code', $symptom_code)->delete();
 
         return redirect()->route('rules.index')
-                        ->with('success', 'Rule deleted successfully');
+                        ->with('success', 'Aturan berhasil dihapus');
     }
 }

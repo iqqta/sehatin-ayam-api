@@ -12,11 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('symptoms', function (Blueprint $table) {
-            $table->id();
-            $table->string('code')->unique();
+            $table->string('symptom_code')->primary();
             $table->string('name');
-            // $table->text('description')->nullable(); // Removed as per consolidation
-            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

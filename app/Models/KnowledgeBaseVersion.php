@@ -7,23 +7,33 @@ use Illuminate\Support\Facades\DB;
 
 class KnowledgeBaseVersion extends Model
 {
+    protected $primaryKey = 'version';
+    public $incrementing = true;
+    protected $keyType = 'int';
     protected $fillable = [
         'version',
         'published_at',
-        'created_by',
+        'published_by',
         'diseases_count',
         'symptoms_count',
         'rules_count',
-        'treatments_count',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'published_by', 'username');
+    }
     protected $casts = [
         'published_at' => 'datetime',
+        'diseases_count' => 'integer',
+        'symptoms_count' => 'integer',
+        'rules_count' => 'integer',
+        'version' => 'integer',
     ];
 
     public static function latestVersion()
     {
-        return self::latest('version')->first();
+        return self::orderByDesc('version')->first();
     }
 
     public static function hasPendingChanges()
@@ -31,28 +41,25 @@ class KnowledgeBaseVersion extends Model
         $latest = self::latestVersion();
         
         if (!$latest) {
-            // If no version exists yet, check if there's any data to publish
-            return Disease::exists() || Symptom::exists() || Rule::exists() || Treatment::exists();
+            return Disease::exists() || Symptom::exists() || Rule::exists();
         }
 
-        // Check if row counts have changed (detects additions AND deletions)
-        if (Disease::count() !== $latest->diseases_count) return true;
-        if (Symptom::count() !== $latest->symptoms_count) return true;
-        if (Rule::count() !== $latest->rules_count) return true;
-        if (Treatment::count() !== $latest->treatments_count) return true;
+        // Pengecekan jumlah tiap data
+        if ((int) Disease::count() !== $latest->diseases_count) return true;
+        if ((int) Symptom::count() !== $latest->symptoms_count) return true;
+        if ((int) Rule::count() !== $latest->rules_count) return true;
 
-        // Check if any records were updated after last publish
+        // Pengecekan perubahan data berdasarkan update
         $lastPublished = $latest->published_at;
         
-        $tables = ['diseases', 'symptoms', 'rules', 'treatments'];
+        $tables = ['diseases', 'symptoms', 'rules'];
         
         foreach ($tables as $table) {
             $latestUpdate = DB::table($table)->max('updated_at');
-            if ($latestUpdate && $latestUpdate > $lastPublished) {
+            if ($latestUpdate && \Carbon\Carbon::parse($latestUpdate)->gt($lastPublished)) {
                 return true;
             }
         }
-
         return false;
     }
 }

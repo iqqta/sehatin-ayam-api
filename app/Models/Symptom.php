@@ -10,13 +10,16 @@ class Symptom extends Model
     use HasFactory;
 
     protected $fillable = [
-        'code',
+        'symptom_code',
         'name',
-        'image',
     ];
+
+    protected $primaryKey = 'symptom_code';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public function rules()
     {
-        return $this->hasMany(Rule::class);
+        return $this->hasMany(Rule::class, 'symptom_code', 'symptom_code');
     }
 }

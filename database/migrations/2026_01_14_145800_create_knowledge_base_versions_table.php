@@ -12,15 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('knowledge_base_versions', function (Blueprint $table) {
-            $table->id();
-            $table->integer('version')->unsigned();
+            $table->integer('version')->primary();
             $table->timestamp('published_at')->useCurrent();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('published_by');
             $table->integer('diseases_count')->default(0);
             $table->integer('symptoms_count')->default(0);
             $table->integer('rules_count')->default(0);
             $table->integer('treatments_count')->default(0);
             $table->timestamps();
+        
+            // Foreign key
+            $table->foreign('published_by')->references('username')->on('users');
         });
     }
 

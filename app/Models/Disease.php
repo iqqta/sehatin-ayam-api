@@ -11,18 +11,18 @@ class Disease extends Model
     use HasFactory;
 
     protected $fillable = [
-        'code',
+        'disease_code',
         'name',
         'description',
+        'treatment',
     ];
+
+    protected $primaryKey = 'disease_code';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public function rules(): HasMany
     {
-        return $this->hasMany(Rule::class);
-    }
-
-    public function treatments(): HasMany
-    {
-        return $this->hasMany(Treatment::class);
+        return $this->hasMany(Rule::class, 'disease_code', 'disease_code');
     }
 }
