@@ -23,8 +23,9 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = \Faker\Factory::create();
         return [
-            'username' => $this->faker->userName(),
+            'username' => $faker->userName(),
             'password' => static::$password ??= Hash::make('password'),
         ];
     }
