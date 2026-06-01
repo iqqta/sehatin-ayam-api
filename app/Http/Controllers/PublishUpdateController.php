@@ -16,7 +16,7 @@ class PublishUpdateController extends Controller
     /**
      * Store a new knowledge base version and record.
      */
-    public function store(Request $request)
+    public function store()
     {
         if (!KnowledgeBaseVersion::hasPendingChanges()) {
             return back()->with('error', 'Tidak ada perubahan yang perlu dirilis.');
