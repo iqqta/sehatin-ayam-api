@@ -6,7 +6,6 @@ use App\Models\KnowledgeBaseVersion;
 use App\Models\Disease;
 use App\Models\Symptom;
 use App\Models\Rule;
-use Doctrine\Inflector\Rules\English\Rules;
 use Illuminate\Http\Request;
 use App\Models\KnowledgeVersionRecord;
 use Illuminate\Support\Facades\DB;

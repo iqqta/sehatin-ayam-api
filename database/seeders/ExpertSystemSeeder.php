@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Disease;
 use App\Models\KnowledgeBaseVersion;
+use App\Models\KnowledgeVersionRecord;
 use App\Models\Rule;
 use App\Models\Symptom;
 use Illuminate\Database\Seeder;
+use \Illuminate\Support\Facades\DB;
 
 class ExpertSystemSeeder extends Seeder
 {
@@ -223,5 +225,23 @@ class ExpertSystemSeeder extends Seeder
             'symptoms_count' => Symptom::count(),
             'rules_count' => Rule::count(),
         ]);
+
+        DB::table('knowledge_version_records')->insertUsing(
+            ['version', 'disease_code', 'disease_name', 'disease_description', 'disease_treatment', 'symptom_code', 'symptom_name', 'mb', 'md'],
+            DB::table('rules')
+                ->join('diseases', 'rules.disease_code', '=', 'diseases.disease_code')
+                ->join('symptoms', 'rules.symptom_code', '=', 'symptoms.symptom_code')
+                ->select([
+                    DB::raw('1 as version'),
+                    'diseases.disease_code',
+                    'diseases.name as disease_name',
+                    'diseases.description as disease_description',
+                    'diseases.treatment as disease_treatment',
+                    'symptoms.symptom_code',
+                    'symptoms.name as symptom_name',
+                    'rules.mb',
+                    'rules.md'
+                ])
+        );
     }
 }
