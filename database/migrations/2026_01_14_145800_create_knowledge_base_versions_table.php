@@ -14,15 +14,10 @@ return new class extends Migration
         Schema::create('knowledge_base_versions', function (Blueprint $table) {
             $table->integer('version')->primary();
             $table->timestamp('published_at')->useCurrent();
-            $table->string('published_by');
             $table->integer('diseases_count')->default(0);
             $table->integer('symptoms_count')->default(0);
             $table->integer('rules_count')->default(0);
-            $table->integer('treatments_count')->default(0);
             $table->timestamps();
-        
-            // Foreign key
-            $table->foreign('published_by')->references('username')->on('users');
         });
     }
 

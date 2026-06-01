@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Disease;
+use App\Models\KnowledgeBaseVersion;
 use App\Models\Rule;
 use App\Models\Symptom;
 use Illuminate\Database\Seeder;
@@ -214,5 +215,13 @@ class ExpertSystemSeeder extends Seeder
                 ]);
             }
         }
+
+        KnowledgeBaseVersion::create([
+            'version' => '1',
+            'published_at' => now(),
+            'diseases_count' => Disease::count(),
+            'symptoms_count' => Symptom::count(),
+            'rules_count' => Rule::count(),
+        ]);
     }
 }
