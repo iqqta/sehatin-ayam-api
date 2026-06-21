@@ -7,7 +7,6 @@ use App\Models\Rule;
 use App\Models\Symptom;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule as ValidationRule;
-use Illuminate\Validation\Rules\Exists;
 
 class RuleController extends Controller
 {
