@@ -13,16 +13,11 @@ class KnowledgeBaseVersion extends Model
     protected $fillable = [
         'version',
         'published_at',
-        'published_by',
         'diseases_count',
         'symptoms_count',
         'rules_count',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'published_by', 'username');
-    }
     protected $casts = [
         'published_at' => 'datetime',
         'diseases_count' => 'integer',

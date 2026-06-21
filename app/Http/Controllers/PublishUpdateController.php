@@ -8,7 +8,6 @@ use App\Models\Symptom;
 use App\Models\Rule;
 use App\Models\KnowledgeVersionRecord;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class PublishUpdateController extends Controller
 {
@@ -36,7 +35,6 @@ class PublishUpdateController extends Controller
         $version = KnowledgeBaseVersion::create([
             'version'        => $newVersionNumber,
             'published_at'   => $publishedAt ?: now(),
-            'published_by'   => Auth::user()->username,
             'diseases_count' => Disease::count(),
             'symptoms_count' => Symptom::count(),
             'rules_count'    => Rule::count(),
